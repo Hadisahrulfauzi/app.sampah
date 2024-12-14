@@ -14,20 +14,11 @@ def load_model(model_path):
     # Memuat ResNet50
     model = models.resnet50(pretrained=False)
     num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, len(CLASSES))  # Output layer sesuai jumlah kelas
-
-    # Periksa apakah file model tersedia
-    if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model file not found at {model_path}")
-
-    # Memuat model dengan mapping ke CPU
-    try:
-        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-        model.eval()  # Set model ke mode evaluasi
-        return model
-    except Exception as e:
-        raise RuntimeError(f"Error loading model: {e}")
-
+    model.fc = nn.Linear(num_ftrs, len(CLASSES))  # Mengubah output layer sesuai jumlah kelas
+    # Memuat bobot model yang telah dilatih
+    model.load_state_dict(torch.load(model_path))
+    model.eval()  # Set model ke mode evaluasi
+    return model
 
 # Fungsi untuk memproses gambar yang di-upload
 def process_image(image):
@@ -71,3 +62,6 @@ def main():
             st.write(f"Prediksi Kelas Sampah: {predicted_class}")
         else:
             st.error("Model tidak ditemukan. Pastikan file modelresnet.pth ada di direktori yang sesuai.")
+
+if __name__ == "__main__":
+    main()
