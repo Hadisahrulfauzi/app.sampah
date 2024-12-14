@@ -110,7 +110,7 @@ else:
                 if st.button(f"Hapus Prediksi {i+1}", key=f"hapus_{i}"):
                     # Menghapus entri dari riwayat
                     st.session_state.history.pop(i)
-                    st.rerun()  # Me-refresh halaman setelah penghapusan
+                    st.experimental_rerun()  # Me-refresh halaman setelah penghapusan
                 st.markdown("---")
 
 # Menambahkan CSS kustom untuk mempercantik tampilan
