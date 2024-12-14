@@ -29,7 +29,7 @@ else:
         st.stop()
 
     # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
-    classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
+    classes = ['gfdh', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
 
     # Fungsi untuk memproses gambar input
     def preprocess_image(img):
