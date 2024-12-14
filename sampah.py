@@ -1,72 +1,136 @@
+import streamlit as st
+import numpy as np
 import torch
-from torch import nn
 from torchvision import models, transforms
 from PIL import Image
-import streamlit as st
 import os
+import io
 
-# Daftar kelas sampah
-CLASSES = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash',  
-           'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
+# Sidebar untuk memilih halaman
+menu = st.sidebar.radio("Pilih Halaman", ["Beranda", "Kamera", "Riwayat"])
 
-# Fungsi untuk memuat model yang sudah dilatih
-def load_model(model_path, device):
-    # Memuat ResNet50
-    model = models.resnet50(pretrained=False)
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, len(CLASSES))  # Mengubah output layer sesuai jumlah kelas
-    # Memuat bobot model yang telah dilatih
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    model.to(device)  # Memindahkan model ke device yang sesuai
+# Memuat model yang sudah dilatih
+model_path = 'C:/Users/Irpan/Documents/PCD-IRPAN/DATASET/hasil/model_6class.pth'
+if not os.path.exists(model_path):
+    st.error(f"Model tidak ditemukan di {model_path}")
+else:
+    # Memuat model dari file
+    model = torch.load(model_path)
     model.eval()  # Set model ke mode evaluasi
-    return model
 
-# Fungsi untuk memproses gambar yang di-upload
-def process_image(image):
-    # Transformasi yang diperlukan untuk gambar input
-    preprocess = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Standard ResNet normalization
-    ])
-    img_tensor = preprocess(image)
-    img_tensor = img_tensor(0)  # Tambah dimensi batch
-    return img_tensor
+    # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
+    classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
 
-# Fungsi untuk melakukan prediksi
-def predict(image, model, device):
-    img_tensor = process_image(image)
-    img_tensor = img_tensor.to(device)  # Memindahkan tensor gambar ke device yang sesuai
-    with torch.no_grad():  # Menonaktifkan gradient tracking
-        output = model(img_tensor)  # Melakukan prediksi
-    _, predicted_class = torch.max(output, 1)
-    return CLASSES[predicted_class.item()]
+    # Fungsi untuk memproses gambar input
+    def preprocess_image(img):
+        preprocess = transforms.Compose([
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Normalisasi sesuai dengan model ImageNet
+        ])
+        img_tensor = preprocess(img)
+        img_tensor = img_tensor.unsqueeze(0)  # Menambah dimensi batch
+        return img_tensor
 
-# Main Streamlit UI
-def main():
-    st.title("Prediksi Kelas Sampah Menggunakan ResNet50")
-    
-    # Memastikan perangkat yang digunakan (GPU atau CPU)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # Upload gambar
-    uploaded_file = st.file_uploader("Upload Gambar Sampah", type=["jpg", "jpeg", "png"])
-    
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Gambar yang di-upload", use_column_width=True)
+    # Fungsi untuk memprediksi gambar
+    def predict_image(img_tensor):
+        with torch.no_grad():  # Menonaktifkan tracking gradient
+            output = model(img_tensor)  # Melakukan prediksi
+        _, class_idx = torch.max(output, 1)  # Menentukan kelas dengan probabilitas tertinggi
+        return classes[class_idx.item()], torch.nn.functional.softmax(output, dim=1)[0][class_idx.item()]  # Kembalikan kelas dan probabilitas
 
-        # Muat model
-        model_path = "modelResNet50_model.pth"  # Sesuaikan path model Anda
-        if os.path.exists(model_path):
-            model = load_model(model_path, device)
-            
-            # Prediksi kelas
-            predicted_class = predict(image, model, device)
-            st.write(f"Prediksi Kelas Sampah: {predicted_class}")
+    # Menyimpan riwayat ke session state jika belum ada
+    if "history" not in st.session_state:
+        st.session_state.history = []
+
+    # Header dengan gambar dan deskripsi
+    st.image("https://example.com/path_to_header_image.jpg", use_container_width=True)  # Ganti dengan URL gambar header yang sesuai
+    st.title("Deteksi Penyakit Tanaman dengan AI")
+
+    if menu == "Beranda":
+        st.markdown("""
+        Aplikasi ini menggunakan model *PyTorch* untuk mendeteksi penyakit pada tanaman kentang.
+        Gunakan menu Kamera untuk mengambil gambar daun tanaman dan memprediksi penyakit yang ada.
+        """, unsafe_allow_html=True)
+
+    elif menu == "Kamera":
+        # Menampilkan pilihan untuk mengambil gambar menggunakan kamera
+        camera_input = st.camera_input("Ambil gambar untuk diprediksi")
+
+        if camera_input is not None:
+            # Menampilkan gambar yang diambil
+            st.image(camera_input, caption="Gambar yang diambil.", use_container_width=True)
+
+            # Memproses gambar
+            img = Image.open(camera_input)
+            img_tensor = preprocess_image(img)
+
+            # Prediksi
+            label, confidence = predict_image(img_tensor)
+            st.write(f"Prediksi: {label}")
+            st.write(f"Probabilitas: {confidence:.2f}")
+
+            # Menyimpan gambar dan hasil prediksi ke riwayat
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format="PNG")
+            img_bytes = img_bytes.getvalue()
+            st.session_state.history.append({
+                "image": img_bytes,
+                "label": label,
+                "confidence": confidence
+            })
+
+    elif menu == "Riwayat":
+        # Menampilkan riwayat hasil prediksi
+        if len(st.session_state.history) == 0:
+            st.write("Tidak ada riwayat prediksi.")
         else:
-            st.error("Model tidak ditemukan. Pastikan file modelResNet50_model.pth ada di direktori yang sesuai.")
+            st.write("Riwayat Prediksi Penyakit Tanaman:")
 
-if __name__ == "__main__":
-    main()
+            # Loop untuk menampilkan setiap entri dalam riwayat
+            for i, entry in enumerate(st.session_state.history):
+                # Menampilkan gambar dari riwayat
+                st.image(entry["image"], caption=f"Prediksi {i+1}: {entry['label']} (Probabilitas: {entry['confidence']:.2f})", use_container_width=True)
+                st.write(f"*Prediksi*: {entry['label']}")
+                st.write(f"*Probabilitas*: {entry['confidence']:.2f}")
+
+                # Menambahkan tombol hapus
+                if st.button(f"Hapus Prediksi {i+1}", key=f"hapus_{i}"):
+                    # Menghapus entri dari riwayat
+                    st.session_state.history.pop(i)
+                    st.rerun()  # Me-refresh halaman setelah penghapusan
+                st.markdown("---")
+
+# Menambahkan CSS kustom untuk mempercantik tampilan
+st.markdown("""
+    <style>
+        .css-1d391kg {
+            background-color: #6495ED;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .css-ffhzg2 {
+            font-size: 1.25em;
+            color: #333;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
+        .stImage>img {
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
