@@ -5,18 +5,19 @@ from PIL import Image
 import streamlit as st
 import os
 
-# Definisikan kelas sampah
+# Daftar kelas sampah
 CLASSES = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash',  
            'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
 
 # Fungsi untuk memuat model yang sudah dilatih
-def load_model(model_path):
+def load_model(model_path, device):
     # Memuat ResNet50
     model = models.resnet50(pretrained=False)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, len(CLASSES))  # Mengubah output layer sesuai jumlah kelas
     # Memuat bobot model yang telah dilatih
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)  # Memindahkan model ke device yang sesuai
     model.eval()  # Set model ke mode evaluasi
     return model
 
@@ -34,8 +35,9 @@ def process_image(image):
     return img_tensor
 
 # Fungsi untuk melakukan prediksi
-def predict(image, model):
+def predict(image, model, device):
     img_tensor = process_image(image)
+    img_tensor = img_tensor.to(device)  # Memindahkan tensor gambar ke device yang sesuai
     with torch.no_grad():  # Menonaktifkan gradient tracking
         output = model(img_tensor)  # Melakukan prediksi
     _, predicted_class = torch.max(output, 1)
@@ -44,6 +46,9 @@ def predict(image, model):
 # Main Streamlit UI
 def main():
     st.title("Prediksi Kelas Sampah Menggunakan ResNet50")
+    
+    # Memastikan perangkat yang digunakan (GPU atau CPU)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Upload gambar
     uploaded_file = st.file_uploader("Upload Gambar Sampah", type=["jpg", "jpeg", "png"])
@@ -55,13 +60,13 @@ def main():
         # Muat model
         model_path = "modelResNet50_model.pth"  # Sesuaikan path model Anda
         if os.path.exists(model_path):
-            model = load_model(model_path)
+            model = load_model(model_path, device)
             
             # Prediksi kelas
-            predicted_class = predict(image, model)
+            predicted_class = predict(image, model, device)
             st.write(f"Prediksi Kelas Sampah: {predicted_class}")
         else:
-            st.error("Model tidak ditemukan. Pastikan file modelresnet.pth ada di direktori yang sesuai.")
+            st.error("Model tidak ditemukan. Pastikan file modelResNet50_model.pth ada di direktori yang sesuai.")
 
 if __name__ == "__main__":
     main()
