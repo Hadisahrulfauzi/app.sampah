@@ -7,7 +7,7 @@ import numpy as np
 
 # Load the trained model
 model_name = "ResNet50"
-model_save_path = "D:\PCD\modelResNet50_model.pth"  # Ganti dengan path model yang sesuai
+model_save_path = "modelResNet50_model.pth"  # Ganti dengan path model yang sesuai
 
 # Jumlah kelas dan nama kelas
 num_classes = 9  # Ganti dengan jumlah kelas yang sesuai
