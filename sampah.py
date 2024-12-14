@@ -39,7 +39,6 @@ def process_image(image):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Standard ResNet normalization
     ])
     img_tensor = preprocess(image)
-    st.write("Tensor Input Shape:", img_tensor.shape)  # Debugging
     img_tensor = img_tensor.unsqueeze(0)  # Tambah dimensi batch
     return img_tensor
 
@@ -48,10 +47,7 @@ def predict(image, model):
     img_tensor = process_image(image)
     with torch.no_grad():  # Menonaktifkan gradient tracking
         output = model(img_tensor)  # Melakukan prediksi
-        st.write("Model Output:", output)  # Debugging
-        
     _, predicted_class = torch.max(output, 1)
-    st.write("Predicted Index:", predicted_class.item())  # Debugging
     return CLASSES[predicted_class.item()]
 
 # Main Streamlit UI
@@ -75,6 +71,3 @@ def main():
             st.write(f"Prediksi Kelas Sampah: {predicted_class}")
         else:
             st.error("Model tidak ditemukan. Pastikan file modelresnet.pth ada di direktori yang sesuai.")
-
-if __name__ == "__main__":
-    main()
