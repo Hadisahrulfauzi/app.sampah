@@ -29,7 +29,7 @@ else:
         st.stop()
 
     # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
-    classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
+    classes = ['gfdh', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
 
     # Fungsi untuk memproses gambar input
     def preprocess_image(img):
@@ -44,18 +44,19 @@ else:
         return img_tensor
 
     # Fungsi untuk memprediksi gambar
-   def predict_image(img_tensor):
-    with torch.no_grad():
-        output = model(img_tensor)
-    
-    # Debugging: tampilkan output prediksi
-    st.write(f"Output Model: {output}")
+    def predict_image(img_tensor):
+        with torch.no_grad():  # Menonaktifkan tracking gradient
+            output = model(img_tensor)  # Melakukan prediksi
+        
+        # Debugging: tampilkan output prediksi
+        st.write(f"Output Model: {output}")
 
-    _, class_idx = torch.max(output, 1)
-    # Debugging: tampilkan index kelas terpilih
-    st.write(f"Class Index: {class_idx.item()}")
+        _, class_idx = torch.max(output, 1)  # Menentukan kelas dengan probabilitas tertinggi
+        
+        # Debugging: tampilkan index kelas terpilih
+        st.write(f"Class Index: {class_idx.item()}")
 
-    return classes[class_idx.item()], torch.nn.functional.softmax(output, dim=1)[0][class_idx.item()]
+        return classes[class_idx.item()], torch.nn.functional.softmax(output, dim=1)[0][class_idx.item()]  # Kembalikan kelas dan probabilitas
 
     # Menyimpan riwayat ke session state jika belum ada
     if "history" not in st.session_state:
