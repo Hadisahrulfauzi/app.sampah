@@ -11,7 +11,7 @@ import io  # For handling image in memory
 menu = st.sidebar.radio("Pilih Halaman", ["Beranda", "Kamera", "Riwayat"])
 
 # Memuat model yang sudah dilatih
-model_path = 'D:\\PCD\\modelResNet50_model (1).pth'
+model_path = 'D:\\PCD\\modelResNet50_model.pth'
 if not os.path.exists(model_path):
     st.error(f"Model tidak ditemukan di {model_path}")
 else:
