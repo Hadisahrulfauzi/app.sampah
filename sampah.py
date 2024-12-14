@@ -19,6 +19,11 @@ else:
     try:
         # Memuat state_dict ke dalam model
         model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+        
+        # Menyesuaikan layer fully connected (fc) untuk jumlah kelas yang benar
+        num_ftrs = model.fc.in_features  # Mendapatkan jumlah fitur input untuk fc layer
+        model.fc = torch.nn.Linear(num_ftrs, 9)  # Menyesuaikan layer fc dengan 9 kelas
+        
         model.eval()  # Set model ke mode evaluasi
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
