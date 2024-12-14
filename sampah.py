@@ -1,7 +1,6 @@
 import streamlit as st
-import numpy as np
 import torch
-from torchvision import models, transforms
+from torchvision import models
 from PIL import Image
 import os
 import io
@@ -14,16 +13,16 @@ model_path = 'modelResNet50_model.pth'
 if not os.path.exists(model_path):
     st.error(f"Model tidak ditemukan di {model_path}")
 else:
-    # Memuat model ResNet50 dari torchvision
-    model = models.resnet50(pretrained=False)  # Membuat arsitektur model ResNet50
+    # Membuat model ResNet50 tanpa bobot pretrained
+    model = models.resnet50(pretrained=False)
+
+    # Menyesuaikan layer fully connected (fc) untuk jumlah kelas yang benar (9 kelas)
+    num_ftrs = model.fc.in_features  # Mendapatkan jumlah fitur input untuk fc layer
+    model.fc = torch.nn.Linear(num_ftrs, 9)  # Menyesuaikan layer fc dengan 9 kelas
+    
     try:
-        # Memuat state_dict ke dalam model
-        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-        
-        # Menyesuaikan layer fully connected (fc) untuk jumlah kelas yang benar
-        num_ftrs = model.fc.in_features  # Mendapatkan jumlah fitur input untuk fc layer
-        model.fc = torch.nn.Linear(num_ftrs, 9)  # Menyesuaikan layer fc dengan 9 kelas
-        
+        # Memuat state_dict ke dalam model, namun dengan pengecualian untuk layer 'fc'
+        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')), strict=False)
         model.eval()  # Set model ke mode evaluasi
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
