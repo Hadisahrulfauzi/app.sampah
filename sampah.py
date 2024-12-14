@@ -1,6 +1,6 @@
 import streamlit as st
 import torch
-from torchvision import models
+from torchvision import models, transforms
 from PIL import Image
 import os
 import io
@@ -67,13 +67,16 @@ else:
     elif menu == "Kamera":
         # Menampilkan pilihan untuk mengambil gambar menggunakan kamera
         camera_input = st.camera_input("Ambil gambar untuk diprediksi")
+        
+        # Menambahkan fitur untuk mengunggah gambar dari perangkat
+        uploaded_file = st.file_uploader("Unggah gambar dari perangkat", type=["jpg", "jpeg", "png"])
 
-        if camera_input is not None:
-            # Menampilkan gambar yang diambil
-            st.image(camera_input, caption="Gambar yang diambil.", use_container_width=True)
+        if uploaded_file is not None:
+            # Jika gambar diunggah
+            img = Image.open(uploaded_file)
+            st.image(img, caption="Gambar yang diunggah.", use_container_width=True)
 
             # Memproses gambar
-            img = Image.open(camera_input)
             img_tensor = preprocess_image(img)
 
             # Prediksi
