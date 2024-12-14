@@ -14,9 +14,11 @@ model_path = 'modelResNet50_model.pth'
 if not os.path.exists(model_path):
     st.error(f"Model tidak ditemukan di {model_path}")
 else:
-    # Memuat model dari file dengan map_location untuk menangani masalah perangkat
+    # Memuat model ResNet50 dari torchvision
+    model = models.resnet50(pretrained=False)  # Membuat arsitektur model ResNet50
     try:
-        model = torch.load(model_path, map_location=torch.device('cpu'))  # Memuat model ke CPU jika diperlukan
+        # Memuat state_dict ke dalam model
+        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
         model.eval()  # Set model ke mode evaluasi
     except Exception as e:
         st.error(f"Terjadi kesalahan saat memuat model: {e}")
