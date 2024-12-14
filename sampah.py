@@ -14,9 +14,13 @@ model_path = 'modelResNet50_model.pth'
 if not os.path.exists(model_path):
     st.error(f"Model tidak ditemukan di {model_path}")
 else:
-    # Memuat model dari file
-    model = torch.load(model_path)
-    model.eval()  # Set model ke mode evaluasi
+    # Memuat model dari file dengan map_location untuk menangani masalah perangkat
+    try:
+        model = torch.load(model_path, map_location=torch.device('cpu'))  # Memuat model ke CPU jika diperlukan
+        model.eval()  # Set model ke mode evaluasi
+    except Exception as e:
+        st.error(f"Terjadi kesalahan saat memuat model: {e}")
+        st.stop()
 
     # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
     classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
