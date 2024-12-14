@@ -31,7 +31,7 @@ def process_image(image):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # Standard ResNet normalization
     ])
     img_tensor = preprocess(image)
-    img_tensor = img_tensor.permute(1, 2, 0)  # Tambah dimensi batch
+    img_tensor = img_tensor(1, 2, 0)  # Tambah dimensi batch
     return img_tensor
 
 # Fungsi untuk melakukan prediksi
