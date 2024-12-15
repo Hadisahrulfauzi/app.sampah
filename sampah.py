@@ -64,7 +64,6 @@ else:
         st.session_state.history = []
 
     # Header dengan gambar dan deskripsi
-    st.image("https://example.com/path_to_header_image.jpg", use_container_width=True)  # Ganti dengan URL gambar header yang sesuai
     st.title("Klasifikasi Sampah")
 
     if menu == "Beranda":
