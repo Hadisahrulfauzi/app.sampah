@@ -70,7 +70,7 @@ else:
         st.markdown("""
         Sampah merupakan masalah lingkungan yang semakin kompleks akibat pertumbuhan populasi dan aktivitas industri. Pengelolaan sampah yang buruk dapat menyebabkan pencemaran dan membahayakan kesehatan. Solusi yang diusulkan adalah penggunaan teknologi Convolutional Neural Network (CNN) untuk mengklasifikasikan sampah secara otomatis melalui gambar. Sistem ini akan membantu masyarakat memisahkan sampah dengan lebih akurat dan memberikan panduan tentang cara mendaur ulang atau membuang sampah dengan benar. Dengan demikian, sistem ini diharapkan meningkatkan tingkat daur ulang, mengurangi beban TPA, dan mendukung ekonomi sirkular serta pengelolaan sampah berkelanjutan.
         """, unsafe_allow_html=True)
-        st.text(""" Kelompok 4  """, unsafe_allow_html=True)
+        st.header(""" Kelompok 4  """, unsafe_allow_html=True)
         st.markdown(""" Muhammad Ridwan Wibisono (211351098)""", unsafe_allow_html=True)
         st.markdown(""" Hadi Sahrul Fauzi (211351060)""", unsafe_allow_html=True)
         st.markdown(""" Mochammad Revan B (211351084)""", unsafe_allow_html=True)
