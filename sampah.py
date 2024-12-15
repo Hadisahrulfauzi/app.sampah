@@ -70,7 +70,7 @@ else:
     if menu == "Beranda":
         st.markdown("""
         Aplikasi ini menggunakan model *Pytorch* untuk mendeteksi jenis sampah dan memberikan informasi cara mendaur ulangnya.
-        Gunakan menu Kamera untuk mengambil gambar sampah dan memprediksi jenisnya.
+        Gunakan menu Kamera untuk mengambil gambar sampah dan memprediksi jenisnya, atau unggah gambar sampah untuk diprediksi.
         """, unsafe_allow_html=True)
 
     elif menu == "Kamera":
@@ -126,6 +126,37 @@ else:
                     st.session_state.history.pop(i)
                     st.rerun()  # Me-refresh halaman setelah penghapusan
                 st.markdown("---")
+
+    elif menu == "Kamera" or menu == "Beranda":
+        # Menambahkan fitur upload foto
+        uploaded_image = st.file_uploader("Atau upload gambar sampah", type=["jpg", "jpeg", "png"])
+
+        if uploaded_image is not None:
+            # Menampilkan gambar yang diupload
+            img = Image.open(uploaded_image)
+            st.image(img, caption="Gambar yang diupload.", use_container_width=True)
+
+            # Memproses gambar
+            img_tensor = preprocess_image(img)
+
+            # Prediksi
+            label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
+            st.write(f"**Prediksi**: {label}")
+            st.write(f"**Probabilitas**: {confidence:.2f}")
+            st.write(f"**Cara Daur Ulang**: {recycling_tip}")
+            st.write(f"**Jenis Sampah**: {recycling_type}")
+
+            # Menyimpan gambar dan hasil prediksi ke riwayat
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format="PNG")
+            img_bytes = img_bytes.getvalue()
+            st.session_state.history.append({
+                "image": img_bytes,
+                "label": label,
+                "confidence": confidence,
+                "recycling_tip": recycling_tip,
+                "recycling_type": recycling_type
+            })
 
 # Menambahkan CSS kustom untuk mempercantik tampilan
 st.markdown("""
