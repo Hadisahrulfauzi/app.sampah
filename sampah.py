@@ -5,7 +5,7 @@ from torchvision import models, transforms
 from PIL import Image
 import numpy as np
 import os
-import io  # For handling image in memory
+import io  # Untuk menangani gambar dalam memori
 
 # Sidebar untuk memilih halaman
 menu = st.sidebar.radio("Pilih Halaman", ["Beranda", "Kamera", "Riwayat"])
@@ -26,6 +26,19 @@ else:
     # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
     classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']  # Ganti dengan nama kelas yang sesuai
 
+    # Informasi tentang cara mendaur ulang sampah
+    recycling_info = {
+        'Cardboard': "Kardus dapat didaur ulang menjadi kertas daur ulang, kotak, dan produk lainnya.",
+        'Food Organics': "Organik makanan bisa diolah menjadi kompos atau digunakan untuk pembuatan energi.",
+        'Glass': "Kaca dapat didaur ulang menjadi produk kaca baru tanpa kehilangan kualitas.",
+        'Metal': "Logam seperti aluminium dan besi dapat didaur ulang tanpa kehilangan kualitas dan digunakan kembali dalam berbagai produk.",
+        'Miscellaneous Trash': "Sampah campuran sulit didaur ulang. Sebaiknya pisahkan komponen yang dapat didaur ulang.",
+        'Paper': "Kertas dapat didaur ulang menjadi produk kertas baru.",
+        'Plastic': "Plastik dapat didaur ulang menjadi berbagai produk baru, seperti bahan bangunan, tas, atau botol baru.",
+        'Textile Trash': "Pakaian dan kain bekas bisa didaur ulang menjadi bahan baru atau digunakan kembali dalam pembuatan produk tekstil lainnya.",
+        'Vegetation': "Tanaman dan vegetasi dapat diolah menjadi kompos atau digunakan untuk energi terbarukan."
+    }
+
     # Fungsi untuk memproses gambar input
     def preprocess_image(img):
         # Mengubah ukuran gambar sesuai input model
@@ -41,7 +54,11 @@ else:
         with torch.no_grad():
             preds = model(img_tensor)  # Prediksi menggunakan model (seharusnya model langsung dipanggil)
             class_idx = torch.argmax(preds, dim=1)  # Menentukan kelas dengan probabilitas tertinggi
-            return classes[class_idx.item()], torch.softmax(preds, dim=1)[0][class_idx].item()  # Mengembalikan kelas dan probabilitas
+            predicted_class = classes[class_idx.item()]
+            confidence = torch.softmax(preds, dim=1)[0][class_idx].item()  # Mendapatkan probabilitas
+            # Mengembalikan kelas, probabilitas, dan informasi daur ulang
+            recycling_tip = recycling_info.get(predicted_class, "Informasi daur ulang tidak tersedia.")
+            return predicted_class, confidence, recycling_tip
 
     # Menyimpan riwayat ke session state jika belum ada
     if "history" not in st.session_state:
@@ -53,8 +70,8 @@ else:
 
     if menu == "Beranda":
         st.markdown("""
-        Aplikasi ini menggunakan model *Pytorch* untuk mendeteksi penyakit pada tanaman kentang.
-        Gunakan menu Kamera untuk mengambil gambar daun tanaman dan memprediksi penyakit yang ada.
+        Aplikasi ini menggunakan model *Pytorch* untuk mendeteksi jenis sampah dan memberikan informasi cara mendaur ulangnya.
+        Gunakan menu Kamera untuk mengambil gambar sampah dan memprediksi jenisnya.
         """, unsafe_allow_html=True)
 
     elif menu == "Kamera":
@@ -73,9 +90,10 @@ else:
             img_tensor = preprocess_image(img)
 
             # Prediksi
-            label, confidence = predict_image(img_tensor)
+            label, confidence, recycling_tip = predict_image(img_tensor)
             st.write(f"Prediksi: {label}")
             st.write(f"Probabilitas: {confidence:.2f}")
+            st.write(f"**Cara Daur Ulang**: {recycling_tip}")
 
             # Menyimpan gambar dan hasil prediksi ke riwayat
             img_bytes = io.BytesIO()
@@ -84,7 +102,8 @@ else:
             st.session_state.history.append({
                 "image": img_bytes,
                 "label": label,
-                "confidence": confidence
+                "confidence": confidence,
+                "recycling_tip": recycling_tip  # Simpan juga informasi daur ulang
             })
 
     elif menu == "Riwayat":
@@ -92,7 +111,7 @@ else:
         if len(st.session_state.history) == 0:
             st.write("Tidak ada riwayat prediksi.")
         else:
-            st.write("Riwayat Prediksi Penyakit Tanaman:")
+            st.write("Riwayat Prediksi Sampah:")
 
             # Loop untuk menampilkan setiap entri dalam riwayat
             for i, entry in enumerate(st.session_state.history):
@@ -100,6 +119,7 @@ else:
                 st.image(entry["image"], caption=f"Prediksi {i+1}: {entry['label']} (Probabilitas: {entry['confidence']:.2f})", use_container_width=True)
                 st.write(f"*Prediksi*: {entry['label']}")
                 st.write(f"*Probabilitas*: {entry['confidence']:.2f}")
+                st.write(f"*Cara Daur Ulang*: {entry['recycling_tip']}")  # Menampilkan informasi daur ulang
 
                 # Menambahkan tombol hapus
                 if st.button(f"Hapus Prediksi {i+1}", key=f"hapus_{i}"):
