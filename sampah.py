@@ -64,11 +64,19 @@ else:
         st.session_state.history = []
 
     # Header dengan gambar dan deskripsi
-    st.title("Klasifikasi Sampah")
+    st.title("Aplikasi Klasifikasi Sampah")
 
     if menu == "Beranda":
         st.markdown("""
         Sampah merupakan masalah lingkungan yang semakin kompleks akibat pertumbuhan populasi dan aktivitas industri. Pengelolaan sampah yang buruk dapat menyebabkan pencemaran dan membahayakan kesehatan. Solusi yang diusulkan adalah penggunaan teknologi Convolutional Neural Network (CNN) untuk mengklasifikasikan sampah secara otomatis melalui gambar. Sistem ini akan membantu masyarakat memisahkan sampah dengan lebih akurat dan memberikan panduan tentang cara mendaur ulang atau membuang sampah dengan benar. Dengan demikian, sistem ini diharapkan meningkatkan tingkat daur ulang, mengurangi beban TPA, dan mendukung ekonomi sirkular serta pengelolaan sampah berkelanjutan.
+        
+        Kelompok 4
+        Muhammad Ridwan Wibisono (211351098)
+        Hadi Sahrul Fauzi (211351060)
+        Mochammad Revan B (211351084)
+        Abriel Salsabina P.Y (211351001)
+        
+
         """, unsafe_allow_html=True)
 
     elif menu == "Kamera":
