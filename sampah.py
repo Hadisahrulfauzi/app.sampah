@@ -104,21 +104,18 @@ else:
         # Pilihan untuk mengambil gambar menggunakan kamera
         camera_input = st.camera_input("Ambil gambar untuk diprediksi")
 
-        # Pilihan untuk mengupload gambar
-        uploaded_image = st.file_uploader("Atau upload gambar", type=["jpg", "jpeg", "png"])
-
-        if uploaded_image is not None:
-            # Menampilkan gambar yang diupload
-            img = Image.open(uploaded_image)
-            st.image(img, caption="Gambar yang diupload.", use_container_width=True)
+        if camera_input is not None:
+            # Menampilkan gambar yang diambil
+            img = Image.open(camera_input)
+            st.image(img, caption="Gambar yang diambil.", use_container_width=True)
 
             # Memproses gambar
             img_tensor = preprocess_image(img)
 
             # Prediksi
             label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
-            st.write(f"Prediksi: {label}")
-            st.write(f"Probabilitas: {confidence:.2f}")
+            st.write(f"**Prediksi**: {label}")
+            st.write(f"**Probabilitas**: {confidence:.2f}")
             st.write(f"**Cara Daur Ulang**: {recycling_tip}")
             st.write(f"**Jenis Sampah**: {recycling_type}")
 
@@ -181,11 +178,4 @@ st.markdown("""
             transition: background-color 0.3s;
         }
         .stButton>button:hover {
-            background-color: #45a049;
-        }
-        .stImage>img {
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-""", unsafe_allow_html=True)
+           
