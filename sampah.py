@@ -75,7 +75,7 @@ else:
         st.markdown("Mochammad Revan B (211351084)", unsafe_allow_html=True)
         st.markdown("Abriel Salsabina P.Y (211351001)", unsafe_allow_html=True)
 
-    elif menu == "Kamera":
+    elif menu == "Klasifikasi Sampah":
         input_choice = st.radio("Pilih Metode Input", ["Ambil Gambar dari Kamera", "Unggah Gambar dari Perangkat"])
 
         if input_choice == "Ambil Gambar dari Kamera":
@@ -130,7 +130,7 @@ else:
                     "recycling_type": recycling_type
                 })
 
-    elif menu == "Riwayat":
+    elif menu == "Riwayat Hasil Klasifikasi":
         if len(st.session_state.history) == 0:
             st.write("Tidak ada riwayat prediksi.")
         else:
