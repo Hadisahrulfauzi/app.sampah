@@ -24,46 +24,19 @@ else:
     model.eval()  # Set model to evaluation mode
 
     # Memuat nama kelas dari model (disesuaikan dengan jumlah kelas model)
-    classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']  # Ganti dengan nama kelas yang sesuai
+    classes = ['Cardboard', 'Food Organics', 'Glass', 'Metal', 'Miscellaneous Trash', 'Paper', 'Plastic', 'Textile Trash', 'Vegetation']
 
     # Informasi tentang cara mendaur ulang sampah
     recycling_info = {
-        'Cardboard': {
-            'info': "Kardus dapat didaur ulang menjadi kertas daur ulang, kotak, dan produk lainnya.",
-            'type': 'Non-Organik'
-        },
-        'Food Organics': {
-            'info': "Organik makanan bisa diolah menjadi kompos atau digunakan untuk pembuatan energi.",
-            'type': 'Organik'
-        },
-        'Glass': {
-            'info': "Kaca dapat didaur ulang menjadi produk kaca baru tanpa kehilangan kualitas.",
-            'type': 'Non-Organik'
-        },
-        'Metal': {
-            'info': "Logam seperti aluminium dan besi dapat didaur ulang tanpa kehilangan kualitas dan digunakan kembali dalam berbagai produk.",
-            'type': 'Non-Organik'
-        },
-        'Miscellaneous Trash': {
-            'info': "Sampah campuran sulit didaur ulang. Sebaiknya pisahkan komponen yang dapat didaur ulang.",
-            'type': 'Non-Organik'
-        },
-        'Paper': {
-            'info': "Kertas dapat didaur ulang menjadi produk kertas baru.",
-            'type': 'Non-Organik'
-        },
-        'Plastic': {
-            'info': "Plastik dapat didaur ulang menjadi berbagai produk baru, seperti bahan bangunan, tas, atau botol baru.",
-            'type': 'Non-Organik'
-        },
-        'Textile Trash': {
-            'info': "Pakaian dan kain bekas bisa didaur ulang menjadi bahan baru atau digunakan kembali dalam pembuatan produk tekstil lainnya.",
-            'type': 'Non-Organik'
-        },
-        'Vegetation': {
-            'info': "Tanaman dan vegetasi dapat diolah menjadi kompos atau digunakan untuk energi terbarukan.",
-            'type': 'Organik'
-        }
+        'Cardboard': {'info': "Kardus dapat didaur ulang menjadi kertas daur ulang, kotak, dan produk lainnya.", 'type': 'Non-Organik'},
+        'Food Organics': {'info': "Organik makanan bisa diolah menjadi kompos atau digunakan untuk pembuatan energi.", 'type': 'Organik'},
+        'Glass': {'info': "Kaca dapat didaur ulang menjadi produk kaca baru tanpa kehilangan kualitas.", 'type': 'Non-Organik'},
+        'Metal': {'info': "Logam seperti aluminium dan besi dapat didaur ulang tanpa kehilangan kualitas dan digunakan kembali dalam berbagai produk.", 'type': 'Non-Organik'},
+        'Miscellaneous Trash': {'info': "Sampah campuran sulit didaur ulang. Sebaiknya pisahkan komponen yang dapat didaur ulang.", 'type': 'Non-Organik'},
+        'Paper': {'info': "Kertas dapat didaur ulang menjadi produk kertas baru.", 'type': 'Non-Organik'},
+        'Plastic': {'info': "Plastik dapat didaur ulang menjadi berbagai produk baru, seperti bahan bangunan, tas, atau botol baru.", 'type': 'Non-Organik'},
+        'Textile Trash': {'info': "Pakaian dan kain bekas bisa didaur ulang menjadi bahan baru atau digunakan kembali dalam pembuatan produk tekstil lainnya.", 'type': 'Non-Organik'},
+        'Vegetation': {'info': "Tanaman dan vegetasi dapat diolah menjadi kompos atau digunakan untuk energi terbarukan.", 'type': 'Organik'}
     }
 
     # Fungsi untuk memproses gambar input
@@ -79,7 +52,7 @@ else:
     # Fungsi untuk memprediksi gambar
     def predict_image(img_tensor):
         with torch.no_grad():
-            preds = model(img_tensor)  # Prediksi menggunakan model (seharusnya model langsung dipanggil)
+            preds = model(img_tensor)  # Prediksi menggunakan model
             class_idx = torch.argmax(preds, dim=1)  # Menentukan kelas dengan probabilitas tertinggi
             predicted_class = classes[class_idx.item()]
             confidence = torch.softmax(preds, dim=1)[0][class_idx].item()  # Mendapatkan probabilitas
@@ -129,31 +102,6 @@ else:
                 "confidence": confidence,
                 "recycling_tip": recycling_tip,
                 "recycling_type": recycling_type
-            })
-            # Pilihan untuk mengupload gambar
-        uploaded_image = st.file_uploader("Atau upload gambar", type=["jpg", "jpeg", "png"])
-
-        if uploaded_image is not None:
-            # Menampilkan gambar yang diupload
-            img = Image.open(uploaded_image)
-            st.image(img, caption="Gambar yang diupload.", use_container_width=True)
-
-            # Memproses gambar
-            img_tensor = preprocess_image(img)
-
-            # Prediksi
-            label, confidence = predict_image(img_tensor)
-            st.write(f"Prediksi: {label}")
-            st.write(f"Probabilitas: {confidence:.2f}")
-
-            # Menyimpan gambar dan hasil prediksi ke riwayat
-            img_bytes = io.BytesIO()
-            img.save(img_bytes, format="PNG")
-            img_bytes = img_bytes.getvalue()
-            st.session_state.history.append({
-                "image": img_bytes,
-                "label": label,
-                "confidence": confidence
             })
 
     elif menu == "Riwayat":
