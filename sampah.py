@@ -130,6 +130,31 @@ else:
                 "recycling_tip": recycling_tip,
                 "recycling_type": recycling_type
             })
+            # Pilihan untuk mengupload gambar
+        uploaded_image = st.file_uploader("Atau upload gambar", type=["jpg", "jpeg", "png"])
+
+        if uploaded_image is not None:
+            # Menampilkan gambar yang diupload
+            img = Image.open(uploaded_image)
+            st.image(img, caption="Gambar yang diupload.", use_container_width=True)
+
+            # Memproses gambar
+            img_tensor = preprocess_image(img)
+
+            # Prediksi
+            label, confidence = predict_image(img_tensor)
+            st.write(f"Prediksi: {label}")
+            st.write(f"Probabilitas: {confidence:.2f}")
+
+            # Menyimpan gambar dan hasil prediksi ke riwayat
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format="PNG")
+            img_bytes = img_bytes.getvalue()
+            st.session_state.history.append({
+                "image": img_bytes,
+                "label": label,
+                "confidence": confidence
+            })
 
     elif menu == "Riwayat":
         # Menampilkan riwayat hasil prediksi
