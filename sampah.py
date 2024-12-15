@@ -76,7 +76,7 @@ else:
         st.markdown("Abriel Salsabina P.Y (211351001)", unsafe_allow_html=True)
 
     elif menu == "Klasifikasi Sampah":
-        input_choice = st.radio("Pilih Metode Input", ["Ambil Gambar dari Kamera", "Unggah Gambar dari Perangkat"])
+        input_choice = st.radio.header("Pilih Metode Input", ["Ambil Gambar dari Kamera", "Unggah Gambar dari Perangkat"])
 
         if input_choice == "Ambil Gambar dari Kamera":
             camera_input = st.camera_input("Ambil gambar untuk diprediksi")
