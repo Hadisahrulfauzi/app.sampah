@@ -68,8 +68,7 @@ else:
 
     if menu == "Beranda":
         st.markdown("""
-        Aplikasi ini menggunakan model *Pytorch* untuk mendeteksi jenis sampah dan memberikan informasi cara mendaur ulangnya.
-        Gunakan menu Kamera untuk mengambil gambar sampah atau Unggah gambar untuk diprediksi.
+        Sampah merupakan masalah lingkungan yang semakin kompleks akibat pertumbuhan populasi dan aktivitas industri. Pengelolaan sampah yang buruk dapat menyebabkan pencemaran dan membahayakan kesehatan. Solusi yang diusulkan adalah penggunaan teknologi Convolutional Neural Network (CNN) untuk mengklasifikasikan sampah secara otomatis melalui gambar. Sistem ini akan membantu masyarakat memisahkan sampah dengan lebih akurat dan memberikan panduan tentang cara mendaur ulang atau membuang sampah dengan benar. Dengan demikian, sistem ini diharapkan meningkatkan tingkat daur ulang, mengurangi beban TPA, dan mendukung ekonomi sirkular serta pengelolaan sampah berkelanjutan.
         """, unsafe_allow_html=True)
 
     elif menu == "Kamera":
