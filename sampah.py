@@ -8,7 +8,7 @@ import os
 import io  # Untuk menangani gambar dalam memori
 
 # Sidebar untuk memilih halaman
-menu = st.sidebar.radio("Pilih Halaman", ["Beranda", "Kamera", "Riwayat"])
+menu = st.sidebar.radio("Pilih Halaman", ["Beranda", "Klasifikasi Sampah", "Riwayat Hasil Klasifikasi"])
 
 # Memuat model yang sudah dilatih
 model_path = 'modelResNet50_model.pth'
@@ -75,7 +75,7 @@ else:
         st.markdown("Mochammad Revan B (211351084)", unsafe_allow_html=True)
         st.markdown("Abriel Salsabina P.Y (211351001)", unsafe_allow_html=True)
 
-    elif menu == "KlasifikasiSampah":
+    elif menu == "Klasifikasi Sampah":
         input_choice = st.radio("Pilih Metode Input", ["Ambil Gambar dari Kamera", "Unggah Gambar dari Perangkat"])
 
         if input_choice == "Ambil Gambar dari Kamera":
