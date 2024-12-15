@@ -178,4 +178,11 @@ st.markdown("""
             transition: background-color 0.3s;
         }
         .stButton>button:hover {
-           
+            background-color: #45a049;
+        }
+        .stImage>img {
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
