@@ -70,39 +70,64 @@ else:
     if menu == "Beranda":
         st.markdown("""
         Aplikasi ini menggunakan model *Pytorch* untuk mendeteksi jenis sampah dan memberikan informasi cara mendaur ulangnya.
-        Gunakan menu Kamera untuk mengambil gambar sampah dan memprediksi jenisnya, atau unggah gambar sampah untuk diprediksi.
+        Gunakan menu Kamera untuk mengambil gambar sampah atau Unggah gambar untuk diprediksi.
         """, unsafe_allow_html=True)
 
     elif menu == "Kamera":
         # Pilihan untuk mengambil gambar menggunakan kamera
-        camera_input = st.camera_input("Ambil gambar untuk diprediksi")
+        input_choice = st.radio("Pilih Metode Input", ["Ambil Gambar dari Kamera", "Unggah Gambar dari Perangkat"])
 
-        if camera_input is not None:
-            # Menampilkan gambar yang diambil
-            img = Image.open(camera_input)
-            st.image(img, caption="Gambar yang diambil.", use_container_width=True)
+        if input_choice == "Ambil Gambar dari Kamera":
+            camera_input = st.camera_input("Ambil gambar untuk diprediksi")
+            if camera_input is not None:
+                img = Image.open(camera_input)
+                st.image(img, caption="Gambar yang diambil.", use_container_width=True)
 
-            # Memproses gambar
-            img_tensor = preprocess_image(img)
+                # Proses gambar dan prediksi
+                img_tensor = preprocess_image(img)
+                label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
+                st.write(f"**Prediksi**: {label}")
+                st.write(f"**Probabilitas**: {confidence:.2f}")
+                st.write(f"**Cara Daur Ulang**: {recycling_tip}")
+                st.write(f"**Jenis Sampah**: {recycling_type}")
 
-            # Prediksi
-            label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
-            st.write(f"**Prediksi**: {label}")
-            st.write(f"**Probabilitas**: {confidence:.2f}")
-            st.write(f"**Cara Daur Ulang**: {recycling_tip}")
-            st.write(f"**Jenis Sampah**: {recycling_type}")
+                # Menyimpan gambar dan hasil prediksi ke riwayat
+                img_bytes = io.BytesIO()
+                img.save(img_bytes, format="PNG")
+                img_bytes = img_bytes.getvalue()
+                st.session_state.history.append({
+                    "image": img_bytes,
+                    "label": label,
+                    "confidence": confidence,
+                    "recycling_tip": recycling_tip,
+                    "recycling_type": recycling_type
+                })
+        
+        elif input_choice == "Unggah Gambar dari Perangkat":
+            uploaded_image = st.file_uploader("Pilih gambar untuk diprediksi", type=["jpg", "jpeg", "png"])
+            if uploaded_image is not None:
+                img = Image.open(uploaded_image)
+                st.image(img, caption="Gambar yang diunggah.", use_container_width=True)
 
-            # Menyimpan gambar dan hasil prediksi ke riwayat
-            img_bytes = io.BytesIO()
-            img.save(img_bytes, format="PNG")
-            img_bytes = img_bytes.getvalue()
-            st.session_state.history.append({
-                "image": img_bytes,
-                "label": label,
-                "confidence": confidence,
-                "recycling_tip": recycling_tip,
-                "recycling_type": recycling_type
-            })
+                # Proses gambar dan prediksi
+                img_tensor = preprocess_image(img)
+                label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
+                st.write(f"**Prediksi**: {label}")
+                st.write(f"**Probabilitas**: {confidence:.2f}")
+                st.write(f"**Cara Daur Ulang**: {recycling_tip}")
+                st.write(f"**Jenis Sampah**: {recycling_type}")
+
+                # Menyimpan gambar dan hasil prediksi ke riwayat
+                img_bytes = io.BytesIO()
+                img.save(img_bytes, format="PNG")
+                img_bytes = img_bytes.getvalue()
+                st.session_state.history.append({
+                    "image": img_bytes,
+                    "label": label,
+                    "confidence": confidence,
+                    "recycling_tip": recycling_tip,
+                    "recycling_type": recycling_type
+                })
 
     elif menu == "Riwayat":
         # Menampilkan riwayat hasil prediksi
@@ -113,50 +138,16 @@ else:
 
             # Loop untuk menampilkan setiap entri dalam riwayat
             for i, entry in enumerate(st.session_state.history):
-                # Menampilkan gambar dari riwayat
                 st.image(entry["image"], caption=f"Prediksi {i+1}: {entry['label']} (Probabilitas: {entry['confidence']:.2f})", use_container_width=True)
                 st.write(f"*Prediksi*: {entry['label']}")
                 st.write(f"*Probabilitas*: {entry['confidence']:.2f}")
                 st.write(f"*Cara Daur Ulang*: {entry['recycling_tip']}")
                 st.write(f"*Jenis Sampah*: {entry['recycling_type']}")
 
-                # Menambahkan tombol hapus
                 if st.button(f"Hapus Prediksi {i+1}", key=f"hapus_{i}"):
-                    # Menghapus entri dari riwayat
                     st.session_state.history.pop(i)
-                    st.rerun()  # Me-refresh halaman setelah penghapusan
+                    st.rerun()  # Refresh halaman setelah penghapusan
                 st.markdown("---")
-
-    elif menu == "Kamera" or menu == "Beranda":
-        # Menambahkan fitur upload foto
-        uploaded_image = st.file_uploader("Atau upload gambar sampah", type=["jpg", "jpeg", "png"])
-
-        if uploaded_image is not None:
-            # Menampilkan gambar yang diupload
-            img = Image.open(uploaded_image)
-            st.image(img, caption="Gambar yang diupload.", use_container_width=True)
-
-            # Memproses gambar
-            img_tensor = preprocess_image(img)
-
-            # Prediksi
-            label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
-            st.write(f"**Prediksi**: {label}")
-            st.write(f"**Probabilitas**: {confidence:.2f}")
-            st.write(f"**Cara Daur Ulang**: {recycling_tip}")
-            st.write(f"**Jenis Sampah**: {recycling_type}")
-
-            # Menyimpan gambar dan hasil prediksi ke riwayat
-            img_bytes = io.BytesIO()
-            img.save(img_bytes, format="PNG")
-            img_bytes = img_bytes.getvalue()
-            st.session_state.history.append({
-                "image": img_bytes,
-                "label": label,
-                "confidence": confidence,
-                "recycling_tip": recycling_tip,
-                "recycling_type": recycling_type
-            })
 
 # Menambahkan CSS kustom untuk mempercantik tampilan
 st.markdown("""
