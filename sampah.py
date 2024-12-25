@@ -28,16 +28,53 @@ else:
 
     # Informasi tentang cara mendaur ulang sampah (dalam Bahasa Indonesia)
     recycling_info = {
-        'Kardus': {'info': "Kardus dapat didaur ulang menjadi kertas daur ulang, kotak, dan produk lainnya.", 'type': 'Non-Organik'},
-        'Organik Makanan': {'info': "Organik makanan bisa diolah menjadi kompos atau digunakan untuk pembuatan energi.", 'type': 'Organik'},
-        'Kaca': {'info': "Kaca dapat didaur ulang menjadi produk kaca baru tanpa kehilangan kualitas.", 'type': 'Non-Organik'},
-        'Logam': {'info': "Logam seperti aluminium dan besi dapat didaur ulang tanpa kehilangan kualitas dan digunakan kembali dalam berbagai produk.", 'type': 'Non-Organik'},
-        'Sampah Campuran': {'info': "Sampah campuran sulit didaur ulang. Sebaiknya pisahkan komponen yang dapat didaur ulang.", 'type': 'Non-Organik'},
-        'Kertas': {'info': "Kertas dapat didaur ulang menjadi produk kertas baru.", 'type': 'Non-Organik'},
-        'Plastik': {'info': "Plastik dapat didaur ulang menjadi berbagai produk baru, seperti bahan bangunan, tas, atau botol baru.", 'type': 'Non-Organik'},
-        'Sampah Tekstil': {'info': "Pakaian dan kain bekas bisa didaur ulang menjadi bahan baru atau digunakan kembali dalam pembuatan produk tekstil lainnya.", 'type': 'Non-Organik'},
-        'Vegetasi': {'info': "Tanaman dan vegetasi dapat diolah menjadi kompos atau digunakan untuk energi terbarukan.", 'type': 'Organik'}
+    'Kardus': {
+        'info': "Kardus dapat didaur ulang menjadi kertas daur ulang, kotak, dan produk lainnya.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah khusus kardus atau pusat daur ulang."
+    },
+    'Organik Makanan': {
+        'info': "Organik makanan bisa diolah menjadi kompos atau digunakan untuk pembuatan energi.",
+        'type': 'Organik',
+        'disposal': "Buang ke tempat sampah organik atau fasilitas pengomposan."
+    },
+    'Kaca': {
+        'info': "Kaca dapat didaur ulang menjadi produk kaca baru tanpa kehilangan kualitas.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah khusus kaca atau fasilitas daur ulang kaca."
+    },
+    'Logam': {
+        'info': "Logam seperti aluminium dan besi dapat didaur ulang tanpa kehilangan kualitas dan digunakan kembali dalam berbagai produk.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah khusus logam atau pusat daur ulang logam."
+    },
+    'Sampah Campuran': {
+        'info': "Sampah campuran sulit didaur ulang. Sebaiknya pisahkan komponen yang dapat didaur ulang.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah umum, namun usahakan untuk memisahkan terlebih dahulu bagian yang dapat didaur ulang."
+    },
+    'Kertas': {
+        'info': "Kertas dapat didaur ulang menjadi produk kertas baru.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah khusus kertas atau pusat daur ulang."
+    },
+    'Plastik': {
+        'info': "Plastik dapat didaur ulang menjadi berbagai produk baru, seperti bahan bangunan, tas, atau botol baru.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke tempat sampah khusus plastik atau fasilitas daur ulang plastik."
+    },
+    'Sampah Tekstil': {
+        'info': "Pakaian dan kain bekas bisa didaur ulang menjadi bahan baru atau digunakan kembali dalam pembuatan produk tekstil lainnya.",
+        'type': 'Non-Organik',
+        'disposal': "Buang ke pusat pengumpulan pakaian bekas atau tempat daur ulang tekstil."
+    },
+    'Vegetasi': {
+        'info': "Tanaman dan vegetasi dapat diolah menjadi kompos atau digunakan untuk energi terbarukan.",
+        'type': 'Organik',
+        'disposal': "Buang ke tempat sampah organik atau fasilitas pengomposan."
     }
+}
+
 
     # Fungsi untuk memproses gambar input
     def preprocess_image(img):
