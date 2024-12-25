@@ -124,11 +124,10 @@ else:
 
                 # Proses gambar dan prediksi
                 img_tensor = preprocess_image(img)
-                label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
-                st.write(f"**Prediksi**:  {recycling_type}{label}")
+                label, confidence, recycling_tip, recycling_disposial, recycling_type = predict_image(img_tensor)
+                st.write(f"**Prediksi Jenis Sampah**:  {recycling_type} ({label})")
                 st.write(f"**Probabilitas**: {confidence:.2f}")
-                st.write(f"**Cara Daur Ulang**: {recycling_tip}")
-                st.write(f"**Jenis Sampah**: {recycling_type}")
+                st.write(f"**Cara Daur Ulang**: {recycling_tip} ({recycling_disposial})")
 
                 # Menyimpan gambar dan hasil prediksi ke riwayat
                 img_bytes = io.BytesIO()
@@ -153,8 +152,7 @@ else:
                 label, confidence, recycling_tip, recycling_disposial, recycling_type = predict_image(img_tensor)
                 st.write(f"**Prediksi Jenis Sampah**:  {recycling_type} ({label})")
                 st.write(f"**Probabilitas**: {confidence:.2f}")
-                st.write(f"**Cara Daur Ulang**: {recycling_tip} {recycling_disposial}")
-                st.write(f"**Jenis Sampah**: {recycling_type}")
+                st.write(f"**Cara Daur Ulang**: {recycling_tip} ({recycling_disposial})")
 
                 # Menyimpan gambar dan hasil prediksi ke riwayat
                 img_bytes = io.BytesIO()
