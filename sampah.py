@@ -92,8 +92,8 @@ else:
             class_idx = torch.argmax(preds, dim=1)  # Menentukan kelas dengan probabilitas tertinggi
             predicted_class = classes[class_idx.item()]  # Kelas yang diprediksi
             confidence = torch.softmax(preds, dim=1)[0][class_idx].item()  # Mendapatkan probabilitas
-            recycling_tip = recycling_info.get(predicted_class, {"info": "Informasi daur ulang tidak tersedia.", "type": "Unknown"})
-            return predicted_class, confidence, recycling_tip['info'], recycling_tip['type']
+            recycling_tip = recycling_info.get(predicted_class, {"info": "Informasi daur ulang tidak tersedia.","disposial": "informasi tidak tersedia.", "type": "Unknown"})
+            return predicted_class, confidence, recycling_tip['info'], recyling_tip['disposial'], recycling_tip['type']
 
     # Menyimpan riwayat ke session state jika belum ada
     if "history" not in st.session_state:
