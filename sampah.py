@@ -149,10 +149,10 @@ else:
 
                 # Proses gambar dan prediksi
                 img_tensor = preprocess_image(img)
-                label, confidence, recycling_tip, recycling_type = predict_image(img_tensor)
+                label, confidence, recycling_tip, recycling_disposial, recycling_type = predict_image(img_tensor)
                 st.write(f"**Prediksi Jenis Sampah**:  {recycling_type} ({label})")
                 st.write(f"**Probabilitas**: {confidence:.2f}")
-                st.write(f"**Cara Daur Ulang**: {recycling_tip}")
+                st.write(f"**Cara Daur Ulang**: {recycling_tip} {recycling_disposial}")
                 st.write(f"**Jenis Sampah**: {recycling_type}")
 
                 # Menyimpan gambar dan hasil prediksi ke riwayat
